@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horarios Cocina — Hotel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --green-dark: #0F6E56;
+  --green-mid: #1D9E75;
+  --green-light: #E1F5EE;
+  --green-text: #085041;
+  --amber-bg: #FAEEDA;
+  --amber-text: #633806;
+  --red-bg: #FCEBEB;
+  --red-text: #791F1F;
+  --pink-bg: #FBEAF0;
+  --pink-text: #72243E;
+  --purple-bg: #EEEDFE;
+  --purple-text: #3C3489;
+  --blue-bg: #E6F1FB;
+  --blue-text: #0C447C;
+  --gray-bg: #F1EFE8;
+  --gray-text: #444441;
+  --surface: #ffffff;
+  --surface2: #f7f6f3;
+  --surface3: #f0efe9;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #1a1a18;
+  --text2: #5f5e5a;
+  --text3: #9a9893;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #1c1c1a;
+    --surface2: #242422;
+    --surface3: #2c2c29;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0efe9;
+    --text2: #9a9893;
+    --text3: #5f5e5a;
+    --green-light: #0a2e22;
+    --green-text: #5DCAA5;
+    --amber-bg: #2e1f06;
+    --amber-text: #FAC775;
+    --red-bg: #2e0f0f;
+    --red-text: #F09595;
+    --pink-bg: #2e0f1e;
+    --pink-text: #ED93B1;
+    --purple-bg: #1a1835;
+    --purple-text: #AFA9EC;
+    --blue-bg: #091c35;
+    --blue-text: #85B7EB;
+    --gray-bg: #222220;
+    --gray-text: #B4B2A9;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: 'DM Sans', sans-serif; background: var(--surface3); color: var(--text); min-height: 100vh; }
+
+/* LAYOUT */
+.app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { background: var(--green-dark); color: white; padding: 0 1.5rem; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-logo { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+.topbar-logo span { opacity: 0.6; font-weight: 300; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.clock-badge { background: rgba(255,255,255,0.15); border-radius: 6px; padding: 4px 10px; font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: 0.05em; }
+.now-indicator { width: 7px; height: 7px; border-radius: 50%; background: #5DCAA5; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+.nav-tabs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; display: flex; gap: 2px; overflow-x: auto; }
+.nav-tab { padding: 12px 16px; font-size: 13px; font-weight: 400; color: var(--text2); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--green-dark); border-bottom-color: var(--green-dark); font-weight: 500; }
+.tab-count { font-size: 10px; background: var(--surface2); border-radius: 10px; padding: 1px 6px; font-weight: 500; }
+
+.main-content { flex: 1; padding: 1.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+.sub-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+.week-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.week-btn { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 12px; font-size: 12px; cursor: pointer; color: var(--text2); white-space: nowrap; font-family: 'DM Sans', sans-serif; transition: all 0.1s; }
+.week-btn:hover { border-color: var(--border2); color: var(--text); }
+.week-btn.active { background: var(--green-dark); color: white; border-color: var(--green-dark); }
+.view-sw { display: flex; background: var(--surface2); border-radius: var(--radius); padding: 3px; gap: 2px; }
+.view-sw-btn { padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; background: none; color: var(--text2); font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 5px; }
+.view-sw-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+/* STATS ROW */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 1.25rem; }
+.stat { background: var(--surface); border-radius: var(--radius); padding: 12px 14px; border: 1px solid var(--border); }
+.stat-n { font-size: 24px; font-weight: 500; color: var(--text); line-height: 1; font-family: 'DM Mono', monospace; }
+.stat-l { font-size: 11px; color: var(--text2); margin-top: 4px; }
+.stat.danger { background: var(--red-bg); border-color: transparent; }
+.stat.danger .stat-n { color: var(--red-text); }
+.stat.danger .stat-l { color: var(--red-text); opacity: 0.7; }
+
+/* ALERT BANNER */
+.alert-banner { background: var(--red-bg); border: 1px solid #F09595; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: var(--red-text); display: flex; align-items: flex-start; gap: 8px; }
+
+/* COVERAGE BAR */
+.cov-bar { display: flex; gap: 4px; margin-bottom: 12px; }
+.cov-day { flex: 1; min-width: 50px; border-radius: var(--radius); padding: 6px 4px; text-align: center; }
+.cov-day-lbl { font-size: 9px; opacity: 0.7; }
+.cov-day-n { font-size: 16px; font-weight: 500; font-family: 'DM Mono', monospace; margin-top: 2px; }
+.cov-ok { background: var(--green-light); color: var(--green-text); }
+.cov-warn { background: var(--amber-bg); color: var(--amber-text); }
+.cov-crit { background: var(--red-bg); color: var(--red-text); }
+
+/* TABLE */
+.table-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+thead th { background: var(--green-dark); color: white; padding: 10px 6px; text-align: center; font-weight: 400; font-size: 11px; border-right: 1px solid rgba(255,255,255,0.15); white-space: nowrap; }
+thead th:first-child { text-align: left; padding-left: 14px; width: 130px; }
+thead th.dc { width: 90px; }
+thead th.today-h { background: #085041; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); }
+td { padding: 8px 5px; text-align: center; vertical-align: middle; border-right: 1px solid var(--border); }
+td:first-child { text-align: left; padding-left: 14px; border-right: 1px solid var(--border2); }
+td:last-child { border-right: none; }
+td.today-col { background: rgba(15,110,86,0.04); }
+td.alert-d { background: rgba(252,235,235,0.5); }
+.emp-name { font-weight: 500; font-size: 12px; color: var(--text); }
+.role-pill { display: inline-block; font-size: 9px; border-radius: 4px; padding: 1px 5px; margin-top: 2px; }
+.hrs-col { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text); }
+.shift { border-radius: 4px; padding: 2px 4px; font-size: 10px; display: inline-block; width: 100%; cursor: pointer; transition: opacity 0.1s; line-height: 1.35; }
+.shift:hover { opacity: 0.75; }
+.sw { background: var(--green-light); color: var(--green-text); }
+.sl { background: var(--amber-bg); color: var(--amber-text); font-style: italic; }
+.sv { background: var(--red-bg); color: var(--red-text); font-weight: 500; }
+.sm { background: var(--pink-bg); color: var(--pink-text); font-weight: 500; }
+.sb { background: var(--gray-bg); color: var(--gray-text); }
+.split-cell { display: flex; flex-direction: column; gap: 2px; }
+.grp-row td { background: var(--surface2); font-size: 10px; font-weight: 500; color: var(--text3); padding: 5px 14px; letter-spacing: 0.05em; border-right: none; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.hidden { display: none; }
+.modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.25rem; width: 100%; max-width: 380px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+.modal h3 { font-size: 14px; font-weight: 500; margin-bottom: 1rem; color: var(--text); }
+.modal label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 4px; }
+.modal input, .modal select { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text); margin-bottom: 10px; font-family: 'DM Sans', sans-serif; }
+.quick-btns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+.quick-btn { font-size: 10px; padding: 3px 8px; border: 1px solid var(--border2); border-radius: 4px; background: var(--surface2); cursor: pointer; color: var(--text2); font-family: 'DM Sans', sans-serif; }
+.quick-btn:hover { background: var(--green-light); color: var(--green-text); }
+.modal-actions { display: flex; gap: 8px; margin-top: 4px; }
+.btn-primary { background: var(--green-dark); color: white; border: none; border-radius: var(--radius); padding: 8px 16px; font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.btn-primary:hover { background: var(--green-mid); }
+.btn-sec { background: none; border: 1px solid var(--border2); border-radius: var(--radius); padding: 8px 14px; font-size: 13px; cursor: pointer; color: var(--text2); font-family: 'DM Sans', sans-serif; }
+
+/* FORM CARD */
+.form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-top: 1rem; box-shadow: var(--shadow); }
+.form-card h3 { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 1rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.form-group label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 3px; }
+.form-group input, .form-group select { width: 100%; padding: 7px 9px; font-size: 12px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; }
+.day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin: 8px 0; }
+.day-inp label { font-size: 9px; color: var(--text3); text-align: center; display: block; margin-bottom: 2px; }
+.day-inp input { font-size: 10px; padding: 4px 2px; text-align: center; }
+
+/* EMP GRID */
+.emp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.emp-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; cursor: pointer; transition: border-color 0.15s, transform 0.1s; box-shadow: var(--shadow); }
+.emp-card:hover { border-color: var(--green-mid); transform: translateY(-1px); }
+.emp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; font-size: 12px; margin-bottom: 8px; }
+.saldo-bar { height: 4px; border-radius: 2px; background: var(--surface2); margin-top: 6px; overflow: hidden; }
+.saldo-fill { height: 100%; border-radius: 2px; }
+
+/* VAC TABLE */
+.vac-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); }
+.vac-tbl { border-collapse: collapse; min-width: 860px; width: 100%; font-size: 11px; }
+.vac-tbl th { background: var(--green-dark); color: white; padding: 8px 4px; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); font-weight: 400; font-size: 10px; }
+.vac-tbl th.ec { text-align: left; padding-left: 12px; width: 130px; }
+.vac-tbl td { padding: 6px 3px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center; }
+.vac-tbl tr:last-child td { border-bottom: none; }
+.vac-tbl td.ecc { text-align: left; padding-left: 12px; background: var(--surface); }
+.vac-tbl .vgr td { background: var(--surface2); font-size: 10px; font-weight: 500; color: var(--text3); padding: 4px 12px; border-right: none; letter-spacing: 0.05em; }
+.vb { border-radius: 3px; padding: 2px 4px; font-size: 9px; font-weight: 500; display: inline-block; width: calc(100% - 4px); text-align: center; }
+
+/* NOW TAB */
+.now-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; box-shadow: var(--shadow); }
+.now-title { font-size: 11px; font-weight: 500; color: var(--text3); margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+.now-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.now-row:last-child { border-bottom: none; }
+.now-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.now-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; flex-shrink: 0; }
+
+/* NOTES */
+.note-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.note-item:last-child { border-bottom: none; }
+.note-date { font-size: 10px; color: var(--text3); min-width: 65px; font-family: 'DM Mono', monospace; }
+
+/* ADD BTN */
+.add-btn { background: var(--green-dark); color: white; border: none; border-radius: var(--radius); padding: 8px 16px; font-size: 12px; cursor: pointer; margin-top: 1rem; display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
+.add-btn:hover { background: var(--green-mid); }
+.add-btn.purple { background: #534AB7; }
+.add-btn.amber { background: #BA7517; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+.empty i { font-size: 32px; display: block; margin-bottom: 10px; }
+
+/* YEAR NAV */
+.year-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+.year-nav button { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 12px; font-size: 14px; cursor: pointer; color: var(--text); }
+.year-nav span { font-size: 16px; font-weight: 500; min-width: 44px; text-align: center; font-family: 'DM Mono', monospace; }
+
+/* LEGEND */
+.legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .topbar-logo span { display: none; }
+  .main-content { padding: 1rem; }
+  .form-grid, .form-grid.three { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<header class="topbar">
+  <div class="topbar-left">
+    <i class="ti ti-chef-hat" style="font-size:20px;"></i>
+    <div class="topbar-logo">Cocina <span>· Hotel</span></div>
+  </div>
+  <div class="topbar-right">
+    <div class="now-indicator"></div>
+    <div class="clock-badge" id="clockBadge">00:00</div>
+  </div>
+</header>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" onclick="setTab('plantilla')"><i class="ti ti-calendar-week"></i> Plantilla</button>
+  <button class="nav-tab" onclick="setTab('ahora')"><i class="ti ti-radio"></i> Ahora</button>
+  <button class="nav-tab" onclick="setTab('extras')"><i class="ti ti-star"></i> Extras <span class="tab-count" id="cExtras">0</span></button>
+  <button class="nav-tab" onclick="setTab('practicas')"><i class="ti ti-school"></i> Prácticas <span class="tab-count" id="cPracticas">0</span></button>
+  <button class="nav-tab" onclick="setTab('vacaciones')"><i class="ti ti-beach"></i> Vacaciones</button>
+  <button class="nav-tab" onclick="setTab('notas')"><i class="ti ti-notes"></i> Notas <span class="tab-count" id="cNotas">0</span></button>
+</nav>
+
+<main class="main-content">
+  <div id="subBar"></div>
+  <div id="content"></div>
+</main>
+
+</div>
+
+<!-- MODAL EDITAR TURNO -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle"><i class="ti ti-pencil" style="font-size:14px;vertical-align:-2px;margin-right:6px;color:#1D9E75;"></i>Editar turno</h3>
+    <label>Turno</label>
+    <input type="text" id="modalVal" placeholder="09:00-17:00 o LIBRE o VACACIONES">
+    <div class="quick-btns">
+      <button class="quick-btn" onclick="setModalVal('LIBRE')">LIBRE</button>
+      <button class="quick-btn" onclick="setModalVal('VACACIONES')">VACACIONES</button>
+      <button class="quick-btn" onclick="setModalVal('06:30-14:30')">06:30-14:30</button>
+      <button class="quick-btn" onclick="setModalVal('08:00-16:00')">08:00-16:00</button>
+      <button class="quick-btn" onclick="setModalVal('12:00-16:00\n20:00-00:00')">Partido 12/20</button>
+      <button class="quick-btn" onclick="setModalVal('14:30-22:30')">14:30-22:30</button>
+      <button class="quick-btn" onclick="setModalVal('16:00-00:00')">16:00-00:00</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveModal()">Guardar</button>
+      <button class="btn-sec" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROLES = {
+  'Rubén':  {rol:'Jefe de cocina',    color:'#185FA5', bg:'#E6F1FB', txt:'#0C447C'},
+  'Darío':  {rol:'Cocinero',          color:'#1D9E75', bg:'#E1F5EE', txt:'#085041'},
+  'Fabián': {rol:'Cocinero',          color:'#1D9E75', bg:'#E1F5EE', txt:'#085041'},
+  'Álvaro': {rol:'Cocinero',          color:'#1D9E75', bg:'#E1F5EE', txt:'#085041'},
+  'Rocío':  {rol:'Segunda cocina',    color:'#534AB7', bg:'#EEEDFE', txt:'#3C3489'},
+  'John':   {rol:'Ayudante',          color:'#BA7517', bg:'#FAEEDA', txt:'#633806'},
+  'David':  {rol:'Ayudante',          color:'#BA7517', bg:'#FAEEDA', txt:'#633806'},
+  'Ana':    {rol:'Ayudante',          color:'#BA7517', bg:'#FAEEDA', txt:'#633806'},
+  'Rosa':   {rol:'Fregantina',        color:'#888780', bg:'#F1EFE8', txt:'#444441'},
+  'Camila': {rol:'Fregantina',        color:'#888780', bg:'#F1EFE8', txt:'#444441'},
+};
+const GROUPS = [
+  {label:'👑 Jefatura',        members:['Rubén']},
+  {label:'🍳 Cocineros',       members:['Darío','Fabián','Álvaro']},
+  {label:'📋 Segunda cocina',  members:['Rocío']},
+  {label:'🤝 Ayudantes',       members:['John','David','Ana']},
+  {label:'🧹 Fregantinas',     members:['Rosa','Camila']},
+];
+const SPECIAL = {Camila:'BAJA MATERNAL', Rocío:'BAJA MATERNAL'};
+const SEM_LABELS = ['20–26 abr','27abr–3may','4–10 may','11–17may','18–24may','25–31may'];
+const SEM_DAYS = [
+  ['L 20/04','M 21/04','X 22/04','J 23/04','V 24/04','S 25/04','D 26/04'],
+  ['L 27/04','M 28/04','X 29/04','J 30/04','V 01/05','S 02/05','D 03/05'],
+  ['L 04/05','M 05/05','X 06/05','J 07/05','V 08/05','S 09/05','D 10/05'],
+  ['L 11/05','M 12/05','X 13/05','J 14/05','V 15/05','S 16/05','D 17/05'],
+  ['L 18/05','M 19/05','X 20/05','J 21/05','V 22/05','S 23/05','D 24/05'],
+  ['L 25/05','M 26/05','X 27/05','J 28/05','V 29/05','S 30/05','D 31/05'],
+];
+let turnos = [
+  {Rubén:['16:00-00:00','16:00-00:00','08:00-16:00','08:00-16:00','08:00-16:00','LIBRE','LIBRE'],Darío:['12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','LIBRE','LIBRE','14:30-22:30','08:00-16:00','08:00-16:00'],Fabián:['08:00-16:00','08:00-16:00','06:30-14:30','06:30-14:30','LIBRE','LIBRE','12:00-16:00\n20:00-00:00'],Álvaro:['LIBRE','LIBRE','16:00-00:00','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['06:30-14:30','06:30-14:30','LIBRE','LIBRE','06:30-14:30','06:30-14:30','06:30-14:30'],David:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],Ana:['LIBRE','LIBRE','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','16:00-00:00','16:00-00:00','16:00-00:00'],Rosa:['','','16:00-00:00','09:00-17:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','16:00-00:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+  {Rubén:['12:00-20:00','12:00-20:00','LIBRE','LIBRE','08:00-16:00','08:00-16:00','08:00-16:00'],Darío:['LIBRE','LIBRE','14:30-22:30','14:30-22:30','14:30-22:30','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],Fabián:['LIBRE','LIBRE','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','10:00-18:00','06:30-14:30','06:30-14:30'],Álvaro:['16:00-00:00','16:00-00:00','LIBRE','LIBRE','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','14:30-22:30'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30','LIBRE','LIBRE'],David:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],Ana:['12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','LIBRE','LIBRE','16:00-00:00','16:00-00:00','16:00-00:00'],Rosa:['LIBRE','LIBRE','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','12:00-20:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+  {Rubén:['08:00-16:00','12:00-16:00\n20:00-00:00','08:00-16:00','LIBRE','LIBRE','08:00-16:00','08:00-16:00'],Darío:['12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','LIBRE','LIBRE','14:30-22:30','14:30-22:30','16:00-00:00'],Fabián:['06:30-14:30','06:30-14:30','LIBRE','LIBRE','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','12:00-20:00'],Álvaro:['14:30-22:30','14:30-22:30','12:00-16:00\n20:00-00:00','LIBRE','LIBRE','12:00-16:00\n20:00-00:00','16:00-00:00'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],David:['LIBRE','LIBRE','06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30'],Ana:['08:00-12:00\n20:00-00:00','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','16:00-00:00','LIBRE','LIBRE'],Rosa:['LIBRE','LIBRE','16:00-00:00','16:00-00:00','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+  {Rubén:['08:00-16:00','12:00-16:00\n20:00-00:00','08:00-16:00','LIBRE','LIBRE','08:00-16:00','08:00-16:00'],Darío:['16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','09:00-17:00','LIBRE','LIBRE'],Fabián:['12:00-16:00\n20:00-00:00','12:00-20:00','LIBRE','LIBRE','16:00-00:00','12:00-16:00\n20:00-00:00','17:00-00:00'],Álvaro:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['LIBRE','LIBRE','06:30-14:30','06:30-14:30','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],David:['06:30-14:30','06:30-14:30','LIBRE','LIBRE','06:30-14:30','06:30-14:30','06:30-14:30'],Ana:['LIBRE','LIBRE','16:00-00:00','14:30-22:30','12:00-16:00\n20:00-00:00','09:00-17:00','12:00-16:00\n20:00-00:00'],Rosa:['LIBRE','LIBRE','08:00-16:00','08:00-16:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','08:00-16:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+  {Rubén:['12:00-20:00','12:00-16:00\n20:00-00:00','08:00-16:00','08:00-16:00','08:00-16:00','LIBRE','LIBRE'],Darío:['14:30-22:30','14:30-22:30','LIBRE','LIBRE','14:30-22:30','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],Fabián:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],Álvaro:['LIBRE','LIBRE','16:00-00:00','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['LIBRE','LIBRE','06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30','06:30-14:30'],David:['06:30-14:30','06:30-14:30','12:00-16:00\n20:00-00:00','LIBRE','LIBRE','08:00-16:00','08:00-16:00'],Ana:['16:00-00:00','LIBRE','LIBRE','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','14:30-22:30','16:00-00:00'],Rosa:['16:00-00:00','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+  {Rubén:['08:00-16:00','LIBRE','LIBRE','12:00-16:00\n20:00-00:00','08:00-16:00','08:00-16:00','08:00-16:00'],Darío:['16:00-00:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','16:00-00:00','LIBRE','LIBRE','16:00-00:00'],Fabián:['LIBRE','LIBRE','16:00-00:00','14:30-22:30','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','16:00-00:00'],Álvaro:['14:30-22:30','08:00-12:00\n16:00-20:00','LIBRE','LIBRE','16:00-00:00','16:00-00:00','12:00-16:00\n20:00-00:00'],Rocío:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL'],John:['06:30-14:30','06:30-14:30','06:30-14:30','LIBRE','LIBRE','06:30-14:30','06:30-14:30'],David:['12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','09:00-17:00','06:30-14:30','06:30-14:30','LIBRE','LIBRE'],Ana:['VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES','VACACIONES'],Rosa:['LIBRE','LIBRE','08:00-16:00','08:00-16:00','12:00-16:00\n20:00-00:00','12:00-16:00\n20:00-00:00','09:00-17:00'],Camila:['BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL','BAJA MATERNAL']},
+];
+let vacData = {
+  Rubén:  [{tipo:'verano',inicio:'2026-08-01',fin:'2026-08-22',notas:'Verano'},{tipo:'invierno',inicio:'2026-12-24',fin:'2026-12-31',notas:'Navidad'}],
+  Darío:  [{tipo:'extra',inicio:'2026-03-01',fin:'2026-03-07',notas:'Semana Santa'}],
+  Fabián: [{tipo:'verano',inicio:'2026-07-15',fin:'2026-08-04',notas:'Verano'},{tipo:'extra',inicio:'2026-05-18',fin:'2026-05-24',notas:'Mayo'}],
+  Álvaro: [{tipo:'verano',inicio:'2026-07-01',fin:'2026-07-14',notas:'Verano'},{tipo:'extra',inicio:'2026-05-11',fin:'2026-05-17',notas:'Mayo'}],
+  Rocío:  [{tipo:'extra',inicio:'2026-01-15',fin:'2026-12-31',notas:'Baja maternal'}],
+  John:   [{tipo:'extra',inicio:'2026-05-04',fin:'2026-05-10',notas:'Mayo'},{tipo:'verano',inicio:'2026-08-10',fin:'2026-08-25',notas:'Verano'}],
+  David:  [{tipo:'extra',inicio:'2026-04-20',fin:'2026-04-26',notas:'Semana Santa'},{tipo:'verano',inicio:'2026-07-20',fin:'2026-08-10',notas:'Verano'}],
+  Ana:    [{tipo:'extra',inicio:'2026-05-25',fin:'2026-05-31',notas:'Mayo'},{tipo:'verano',inicio:'2026-08-01',fin:'2026-08-15',notas:'Verano'}],
+  Rosa:   [{tipo:'verano',inicio:'2026-07-01',fin:'2026-07-21',notas:'Verano'}],
+  Camila: [{tipo:'extra',inicio:'2026-01-20',fin:'2026-12-31',notas:'Baja maternal'}],
+};
+const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MIN_COV = 3, DIAS_AÑO = 30;
+let extras=[], practicas=[], notas=[];
+let curTab='plantilla', curWeek=5, curView='sched', vacYear=2026;
+let showForm=null, showVacForm=false, editCell=null;
+
+function parseH(s) {
+  if(!s) return 0;
+  const u=s.toUpperCase();
+  if(['LIBRE','VACACIONES','BAJA'].some(x=>u.includes(x))) return 0;
+  let t=0;
+  s.split('\n').forEach(seg=>{
+    const p=seg.trim().split(/[-aA]/);
+    if(p.length<2) return;
+    const pt=x=>{const[h,m]=x.trim().replace('.',':').split(':').map(Number);return h+(m||0)/60;};
+    let i0=pt(p[0]),e0=pt(p[1]);
+    if(e0<=i0) e0+=24;
+    t+=e0-i0;
+  });
+  return t;
+}
+function scls(s) {
+  if(!s) return '';
+  const u=s.toUpperCase();
+  if(u.includes('MATERNAL')) return 'sm';
+  if(u==='VACACIONES') return 'sv';
+  if(u==='LIBRE') return 'sl';
+  if(u==='BAJA') return 'sb';
+  return 'sw';
+}
+function rShift(val,emp,wi,di) {
+  if(!val) return `<span style="color:var(--text3);font-size:11px;cursor:pointer;" onclick="openEdit('${emp}',${wi},${di})">＋</span>`;
+  const lbl=val.toUpperCase().includes('MATERNAL')?'Baja mat.':val;
+  if(val.includes('\n')) return `<div class="split-cell" onclick="openEdit('${emp}',${wi},${di})">${val.split('\n').map(p=>`<span class="shift ${scls(p)}">${p}</span>`).join('')}</div>`;
+  return `<span class="shift ${scls(val)}" onclick="openEdit('${emp}',${wi},${di})">${lbl}</span>`;
+}
+function cov(wi) {
+  return SEM_DAYS[wi].map((_,di)=>Object.values(turnos[wi]).filter(d=>{const s=d[di];return s&&!['LIBRE','VACACIONES','BAJA MATERNAL','BAJA'].some(x=>s.toUpperCase().includes(x));}).length);
+}
+function vacDias(emp) {
+  return (vacData[emp]||[]).reduce((a,v)=>{
+    const d1=new Date(v.inicio),d2=new Date(v.fin);
+    if(d1.getFullYear()===vacYear||d2.getFullYear()===vacYear) a+=Math.round((d2-d1)/86400000)+1;
+    return a;
+  },0);
+}
+function updateCounts() {
+  document.getElementById('cExtras').textContent=extras.length;
+  document.getElementById('cPracticas').textContent=practicas.length;
+  document.getElementById('cNotas').textContent=notas.length;
+}
+
+function setTab(t) {
+  curTab=t; showForm=null; showVacForm=false; editCell=null;
+  document.querySelectorAll('.nav-tab').forEach((b,i)=>b.classList.toggle('active',['plantilla','ahora','extras','practicas','vacaciones','notas'][i]===t));
+  const hasWeek=['plantilla','extras','practicas'].includes(t);
+  document.getElementById('subBar').innerHTML=hasWeek?buildSubBar():'';
+  render();
+}
+function setWeek(i) {curWeek=i;document.querySelectorAll('.week-btn').forEach((b,j)=>b.classList.toggle('active',j===i));render();}
+function setView(v) {curView=v;document.querySelectorAll('.view-sw-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&v==='sched')||(i===1&&v==='emp')));render();}
+function buildSubBar() {
+  return `<div class="sub-bar">
+    <div class="week-nav">${SEM_LABELS.map((l,i)=>`<button class="week-btn${i===curWeek?' active':''}" onclick="setWeek(${i})">${l}</button>`).join('')}</div>
+    <div class="view-sw">
+      <button class="view-sw-btn${curView==='sched'?' active':''}" onclick="setView('sched')"><i class="ti ti-calendar"></i> Semana</button>
+      <button class="view-sw-btn${curView==='emp'?' active':''}" onclick="setView('emp')"><i class="ti ti-users"></i> Equipo</button>
+    </div>
+  </div>`;
+}
+
+function render() {
+  if(curTab==='plantilla') renderPlantilla();
+  else if(curTab==='ahora') renderAhora();
+  else if(curTab==='extras') renderExtras();
+  else if(curTab==='practicas') renderPracticas();
+  else if(curTab==='vacaciones') renderVacaciones();
+  else renderNotas();
+}
+
+function renderPlantilla() {
+  if(curView==='emp'){renderEmp();return;}
+  const d=turnos[curWeek], days=SEM_DAYS[curWeek], c=cov(curWeek);
+  const alerts=c.map((v,i)=>v<MIN_COV?days[i]:null).filter(Boolean);
+  let h='';
+  if(alerts.length) h+=`<div class="alert-banner"><i class="ti ti-alert-triangle" style="font-size:16px;flex-shrink:0;"></i><div>Cobertura baja (&lt;${MIN_COV} personas) en: <strong>${alerts.join(', ')}</strong>. Considera agregar un extra.</div></div>`;
+  let w=0,l=0,v=0,b=0;
+  Object.values(d).forEach(ds=>ds.forEach(s=>{if(!s)return;const u=s.toUpperCase();if(u.includes('MATERNAL')||u==='BAJA')b++;else if(u==='VACACIONES')v++;else if(u==='LIBRE')l++;else w++;}));
+  h+=`<div class="stats">
+    <div class="stat"><div class="stat-n">${Object.keys(d).filter(e=>d[e].some(s=>s&&!['VACACIONES','LIBRE','BAJA MATERNAL','BAJA'].includes(s.toUpperCase()))).length}</div><div class="stat-l">Activos esta semana</div></div>
+    <div class="stat"><div class="stat-n">${w}</div><div class="stat-l">Turnos de trabajo</div></div>
+    <div class="stat"><div class="stat-n">${l}</div><div class="stat-l">Días libres</div></div>
+    <div class="stat${alerts.length?' danger':''}"><div class="stat-n">${alerts.length}</div><div class="stat-l">Días cobertura baja</div></div>
+  </div>`;
+  h+=`<div class="cov-bar">${c.map((n,i)=>{const cls=n>=MIN_COV?'cov-ok':n>=2?'cov-warn':'cov-crit';return`<div class="cov-day ${cls}"><div class="cov-day-lbl">${days[i].split(' ')[0]}</div><div class="cov-day-n">${n}</div></div>`}).join('')}</div>`;
+  h+=`<div class="legend"><div class="leg"><div class="leg-dot" style="background:#5DCAA5;"></div>Trabajo (clic=editar)</div><div class="leg"><div class="leg-dot" style="background:#EF9F27;"></div>Libre</div><div class="leg"><div class="leg-dot" style="background:#F09595;"></div>Vacaciones</div><div class="leg"><div class="leg-dot" style="background:#ED93B1;"></div>Baja maternal</div></div>`;
+  h+=`<div class="table-wrap"><table><thead><tr><th>Empleado</th>${days.map((day,i)=>`<th class="dc${i===1?' today-h':''}">${day}${c[i]<MIN_COV?' ⚠️':''}</th>`).join('')}<th style="width:46px;">h/sem</th></tr></thead><tbody>`;
+  GROUPS.forEach(g=>{
+    h+=`<tr class="grp-row"><td colspan="9">${g.label}</td></tr>`;
+    g.members.forEach(emp=>{
+      const r=ROLES[emp], hrs=Math.round((d[emp]||[]).reduce((a,s)=>a+parseH(s),0)*10)/10;
+      h+=`<tr><td><div class="emp-name">${emp}</div><span class="role-pill" style="background:${r.bg};color:${r.txt};">${r.rol}</span></td>${(d[emp]||[]).map((s,di)=>`<td class="${di===1?'today-col':''}${c[di]<MIN_COV?' alert-d':''}">${rShift(s,emp,curWeek,di)}</td>`).join('')}<td class="hrs-col">${hrs}h</td></tr>`;
+    });
+  });
+  h+=`</tbody></table></div>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderEmp() {
+  const all=GROUPS.flatMap(g=>g.members), d=turnos[curWeek];
+  let h=`<div class="emp-grid">`;
+  all.forEach(emp=>{
+    const r=ROLES[emp], isMat=SPECIAL[emp]==='BAJA MATERNAL';
+    const days=d[emp]||[], isVac=days[0]?.toUpperCase()==='VACACIONES';
+    const hrs=Math.round((d[emp]||[]).reduce((a,s)=>a+parseH(s),0)*10)/10;
+    const used=vacDias(emp), saldo=Math.max(0,DIAS_AÑO-used);
+    const sc=saldo>10?'#5DCAA5':saldo>5?'#EF9F27':'#E24B4A';
+    h+=`<div class="emp-card">
+      <div class="emp-avatar" style="background:${r.color}22;color:${r.color};">${emp.substring(0,2).toUpperCase()}</div>
+      <div style="font-weight:500;font-size:13px;">${emp}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px;">${r.rol}</div>
+      ${isMat?`<div style="display:inline-block;background:#FBEAF0;color:#72243E;border-radius:10px;font-size:10px;padding:2px 8px;margin-top:4px;">Baja maternal</div>`:''}
+      ${isVac&&!isMat?`<div style="display:inline-block;background:#FCEBEB;color:#791F1F;border-radius:10px;font-size:10px;padding:2px 8px;margin-top:4px;">Vacaciones</div>`:''}
+      <div style="font-size:11px;color:var(--text2);margin-top:8px;"><i class="ti ti-clock" style="font-size:11px;margin-right:3px;"></i>${hrs}h esta semana</div>
+      <div style="font-size:11px;color:${sc};margin-top:3px;font-weight:500;"><i class="ti ti-beach" style="font-size:11px;margin-right:3px;"></i>${saldo}d vacaciones disponibles</div>
+      <div class="saldo-bar"><div class="saldo-fill" style="width:${Math.min(100,Math.round((used/DIAS_AÑO)*100))}%;background:${sc};"></div></div>
+    </div>`;
+  });
+  h+=`</div>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderAhora() {
+  const now=new Date(), hNow=now.getHours()+now.getMinutes()/60;
+  const d=turnos[5];
+  const trabajando=[], pronto=[], fuera=[];
+  GROUPS.flatMap(g=>g.members).forEach(emp=>{
+    const s=(d[emp]||[])[1];
+    if(!s||['LIBRE','VACACIONES','BAJA'].some(x=>s.toUpperCase().includes(x))){fuera.push({emp,s:s||'—'});return;}
+    let activo=false, ent=null;
+    s.split('\n').forEach(seg=>{
+      const p=seg.trim().split(/[-aA]/);if(p.length<2)return;
+      const pt=x=>{const[h,m]=x.trim().split(':').map(Number);return h+(m||0)/60;};
+      let i0=pt(p[0]),e0=pt(p[1]);if(e0<=i0)e0+=24;
+      if(hNow>=i0&&hNow<e0) activo=true;
+      if(i0>hNow&&i0-hNow<2) ent=seg;
+    });
+    if(activo) trabajando.push({emp,s});
+    else if(ent) pronto.push({emp,s:ent});
+    else fuera.push({emp,s});
+  });
+  const mk=(list,clr,ico,label)=>{
+    if(!list.length) return '';
+    let h=`<div class="now-panel"><div class="now-title"><i class="ti ${ico}" style="font-size:13px;vertical-align:-1px;margin-right:4px;"></i>${label} (${list.length})</div>`;
+    list.forEach(({emp,s})=>{const r=ROLES[emp];h+=`<div class="now-row"><div class="now-dot" style="background:${clr};"></div><div class="now-av" style="background:${r.color}22;color:${r.color};">${emp.substring(0,2).toUpperCase()}</div><div><div style="font-weight:500;font-size:13px;">${emp}</div><div style="font-size:11px;color:var(--text2);">${r.rol} · ${s.replace('\n',' / ')}</div></div></div>`;});
+    return h+`</div>`;
+  };
+  let h=`<div class="stats"><div class="stat"><div class="stat-n">${trabajando.length}</div><div class="stat-l">Trabajando ahora</div></div><div class="stat"><div class="stat-n">${pronto.length}</div><div class="stat-l">Entran pronto</div></div><div class="stat"><div class="stat-n">${fuera.length}</div><div class="stat-l">Fuera hoy</div></div></div>`;
+  h+=mk(trabajando,'#1D9E75','ti-check','En turno ahora');
+  h+=mk(pronto,'#BA7517','ti-clock','Entran en menos de 2h');
+  h+=mk(fuera,'#888780','ti-moon','Fuera hoy');
+  h+=`<div style="font-size:11px;color:var(--text3);margin-top:1rem;">Basado en turnos del martes 26/05. Hora actual: ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}.</div>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderExtras() {
+  const we=extras.filter(e=>e.semana===curWeek), days=SEM_DAYS[curWeek];
+  let h=`<div class="stats"><div class="stat"><div class="stat-n">${extras.length}</div><div class="stat-l">Total registrados</div></div><div class="stat"><div class="stat-n">${we.length}</div><div class="stat-l">Esta semana</div></div></div>`;
+  if(we.length){
+    h+=`<div class="table-wrap"><table><thead><tr><th>Extra</th>${days.map(d=>`<th class="dc">${d}</th>`).join('')}<th style="width:40px;"></th></tr></thead><tbody>`;
+    we.forEach(e=>{const gi=extras.indexOf(e);h+=`<tr><td><div class="emp-name">${e.nombre}</div><span class="role-pill" style="background:#FAEEDA;color:#633806;">${e.puesto}</span></td>${e.dias.map(d=>`<td>${d?`<span class="shift sw">${d}</span>`:'<span style="color:var(--text3);">—</span>'}</td>`).join('')}<td><button onclick="extras.splice(${gi},1);updateCounts();render();" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;"><i class="ti ti-trash"></i></button></td></tr>`;});
+    h+=`</tbody></table></div>`;
+  } else h+=`<div class="empty"><i class="ti ti-star"></i>No hay extras esta semana</div>`;
+  if(showForm==='extras'){const dl=['L','M','X','J','V','S','D'];h+=`<div class="form-card"><h3><i class="ti ti-plus" style="font-size:13px;vertical-align:-2px;margin-right:5px;color:#1D9E75;"></i>Nuevo extra — ${SEM_LABELS[curWeek]}</h3><div class="form-grid"><div class="form-group"><label>Nombre</label><input type="text" id="fN" placeholder="Nombre completo"></div><div class="form-group"><label>Puesto</label><select id="fP"><option>Ayudante de cocina</option><option>Cocinero</option><option>Fregantina</option><option>Otro</option></select></div></div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:5px;">Turnos por día</label><div class="day-grid">${days.map((d,i)=>`<div class="day-inp"><label>${dl[i]}<br>${d.split(' ')[1]}</label><input type="text" id="fd${i}" placeholder="09:00-17:00"></div>`).join('')}</div><div style="display:flex;gap:8px;margin-top:4px;"><button class="btn-primary" onclick="saveExtra()">Guardar</button><button class="btn-sec" onclick="showForm=null;render()">Cancelar</button></div></div>`;}
+  else h+=`<button class="add-btn" onclick="showForm='extras';render()"><i class="ti ti-plus"></i> Agregar extra</button>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderPracticas() {
+  const wp=practicas.filter(p=>p.semana===curWeek), days=SEM_DAYS[curWeek];
+  let h=`<div class="stats"><div class="stat"><div class="stat-n">${practicas.length}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n">${wp.length}</div><div class="stat-l">Esta semana</div></div></div>`;
+  if(wp.length){
+    h+=`<div class="table-wrap"><table><thead><tr><th>Alumno/a</th>${days.map(d=>`<th class="dc">${d}</th>`).join('')}<th style="width:40px;"></th></tr></thead><tbody>`;
+    wp.forEach(p=>{const gi=practicas.indexOf(p);h+=`<tr><td><div class="emp-name">${p.nombre}</div><span class="role-pill" style="background:#EEEDFE;color:#3C3489;">Prácticas · ${p.centro}</span></td>${p.dias.map(d=>`<td>${d?`<span class="shift" style="background:#EEEDFE;color:#3C3489;">${d}</span>`:'<span style="color:var(--text3);">—</span>'}</td>`).join('')}<td><button onclick="practicas.splice(${gi},1);updateCounts();render();" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;"><i class="ti ti-trash"></i></button></td></tr>`;});
+    h+=`</tbody></table></div>`;
+  } else h+=`<div class="empty"><i class="ti ti-school"></i>No hay alumnos en prácticas esta semana</div>`;
+  if(showForm==='practicas'){const dl=['L','M','X','J','V','S','D'];h+=`<div class="form-card"><h3><i class="ti ti-school" style="font-size:13px;vertical-align:-2px;margin-right:5px;color:#534AB7;"></i>Nuevo alumno en prácticas</h3><div class="form-grid"><div class="form-group"><label>Nombre</label><input type="text" id="fN" placeholder="Nombre del alumno/a"></div><div class="form-group"><label>Centro</label><input type="text" id="fC" placeholder="Nombre del centro"></div></div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:5px;">Turnos por día</label><div class="day-grid">${days.map((d,i)=>`<div class="day-inp"><label>${dl[i]}<br>${d.split(' ')[1]}</label><input type="text" id="fd${i}" placeholder="08:00-15:00"></div>`).join('')}</div><div style="display:flex;gap:8px;margin-top:4px;"><button class="btn-primary" onclick="savePractica()" style="background:#534AB7;">Guardar</button><button class="btn-sec" onclick="showForm=null;render()">Cancelar</button></div></div>`;}
+  else h+=`<button class="add-btn purple" onclick="showForm='practicas';render()"><i class="ti ti-plus"></i> Agregar alumno en prácticas</button>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderVacaciones() {
+  const all=GROUPS.flatMap(g=>g.members);
+  let tp=0,tv=0,ti=0,te=0;
+  all.forEach(emp=>{(vacData[emp]||[]).forEach(v=>{tp++;if(v.tipo==='verano')tv++;else if(v.tipo==='invierno')ti++;else te++;});});
+  let h=`<div class="stats"><div class="stat"><div class="stat-n">${tp}</div><div class="stat-l">Periodos registrados</div></div><div class="stat"><div class="stat-n">${tv}</div><div class="stat-l">Verano ☀️</div></div><div class="stat"><div class="stat-n">${ti}</div><div class="stat-l">Invierno ❄️</div></div><div class="stat"><div class="stat-n">${te}</div><div class="stat-l">Extra ✦</div></div></div>`;
+  h+=`<div class="year-nav"><button onclick="vacYear--;render()"><i class="ti ti-chevron-left"></i></button><span>${vacYear}</span><button onclick="vacYear++;render()"><i class="ti ti-chevron-right"></i></button><span style="font-size:12px;color:var(--text2);margin-left:4px;">Convenio: ${DIAS_AÑO} días/año</span></div>`;
+  h+=`<div class="legend"><div class="leg"><div class="leg-dot" style="background:#EF9F27;"></div>Verano</div><div class="leg"><div class="leg-dot" style="background:#85B7EB;"></div>Invierno</div><div class="leg"><div class="leg-dot" style="background:#AFA9EC;"></div>Extra</div><div class="leg"><div class="leg-dot" style="background:#ED93B1;"></div>Baja maternal</div></div>`;
+  h+=`<div class="vac-wrap"><table class="vac-tbl"><thead><tr><th class="ec">Empleado</th>${MONTHS.map((m,i)=>{const bg=['#0F6E56','#0F6E56','#0F6E56','#0F6E56','#0F6E56','#BA7517','#BA7517','#BA7517','#0F6E56','#0F6E56','#0F6E56','#185FA5'][i];return`<th style="width:50px;background:${bg};">${m}</th>`}).join('')}<th style="background:#444;width:42px;">Usado</th><th style="background:#444;width:42px;">Queda</th><th style="background:#444;width:34px;"></th></tr></thead><tbody>`;
+  GROUPS.forEach(g=>{
+    h+=`<tr class="vgr"><td colspan="16">${g.label}</td></tr>`;
+    g.members.forEach(emp=>{
+      const r=ROLES[emp], ps=vacData[emp]||[], used=vacDias(emp), saldo=Math.max(0,DIAS_AÑO-used), sc=saldo>10?'#5DCAA5':saldo>5?'#EF9F27':'#E24B4A';
+      const meses=MONTHS.map((_,mi)=>{const ms=new Date(vacYear,mi,1),me=new Date(vacYear,mi+1,0);return ps.filter(v=>{const d1=new Date(v.inicio),d2=new Date(v.fin);return d1<=me&&d2>=ms;});});
+      h+=`<tr><td class="ecc"><div class="emp-name">${emp}</div><span class="role-pill" style="background:${r.bg};color:${r.txt};">${r.rol}</span><div class="saldo-bar"><div class="saldo-fill" style="width:${Math.min(100,Math.round((used/DIAS_AÑO)*100))}%;background:${sc};"></div></div></td>`;
+      h+=meses.map(hits=>{
+        if(!hits.length) return`<td><span style="color:var(--text3);">·</span></td>`;
+        const v=hits[0];let bg,txt,lbl;
+        if(v.tipo==='verano'){bg='#FAEEDA';txt='#633806';lbl='☀️';}
+        else if(v.tipo==='invierno'){bg='#E6F1FB';txt='#0C447C';lbl='❄️';}
+        else if(v.notas?.toLowerCase().includes('maternal')){bg='#FBEAF0';txt='#72243E';lbl='🩷';}
+        else{bg='#EEEDFE';txt='#3C3489';lbl='✦';}
+        return`<td title="${v.notas||''}"><span class="vb" style="background:${bg};color:${txt};">${lbl}</span></td>`;
+      }).join('');
+      h+=`<td style="font-weight:500;font-family:'DM Mono',monospace;font-size:11px;">${used}d</td><td style="font-weight:500;color:${sc};font-family:'DM Mono',monospace;font-size:11px;">${saldo}d</td><td><button onclick="openVacForm('${emp}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;" title="Agregar periodo"><i class="ti ti-plus"></i></button></td></tr>`;
+      if(ps.length){
+        h+=`<tr><td colspan="16" style="padding:3px 12px 8px 20px;">`;
+        ps.forEach((v,vi)=>{let bg,txt;if(v.tipo==='verano'){bg='#FAEEDA';txt='#633806';}else if(v.tipo==='invierno'){bg='#E6F1FB';txt='#0C447C';}else{bg='#EEEDFE';txt='#3C3489';}
+        const d=Math.round((new Date(v.fin)-new Date(v.inicio))/86400000)+1;
+        h+=`<span style="display:inline-flex;align-items:center;gap:5px;background:${bg};color:${txt};border-radius:4px;padding:2px 8px;font-size:10px;margin:2px 3px 2px 0;"><strong>${v.tipo.toUpperCase()}</strong> ${v.inicio}→${v.fin} (${d}d)${v.notas?' · '+v.notas:''}<button onclick="vacData['${emp}'].splice(${vi},1);render();" style="background:none;border:none;cursor:pointer;color:${txt};font-size:12px;"><i class="ti ti-x"></i></button></span>`;});
+        h+=`</td></tr>`;
+      }
+    });
+  });
+  h+=`</tbody></table></div>`;
+  if(showVacForm){
+    const emp=showVacForm!==true?showVacForm:'';
+    h+=`<div class="form-card"><h3><i class="ti ti-beach" style="font-size:13px;vertical-align:-2px;margin-right:5px;color:#BA7517;"></i>Nuevo periodo${emp?' — '+emp:''}</h3>
+    <div class="form-grid"><div class="form-group"><label>Empleado</label><select id="vE">${GROUPS.flatMap(g=>g.members).map(e=>`<option${e===emp?' selected':''}>${e}</option>`).join('')}</select></div><div class="form-group"><label>Tipo</label><select id="vT"><option value="verano">☀️ Verano</option><option value="invierno">❄️ Invierno</option><option value="extra">✦ Extra / puente</option></select></div></div>
+    <div class="form-grid"><div class="form-group"><label>Inicio</label><input type="date" id="vI" value="${vacYear}-07-01"></div><div class="form-group"><label>Fin</label><input type="date" id="vF" value="${vacYear}-07-15"></div></div>
+    <div class="form-group"><label>Notas</label><input type="text" id="vN" placeholder="Semana de playa, acuerdo especial..."></div>
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-primary" onclick="saveVac()" style="background:#BA7517;">Guardar</button><button class="btn-sec" onclick="showVacForm=false;render()">Cancelar</button></div></div>`;
+  } else {
+    h+=`<button class="add-btn amber" onclick="showVacForm=true;render()"><i class="ti ti-plus"></i> Agregar periodo de vacaciones</button>`;
+  }
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderNotas() {
+  let h='';
+  if(notas.length){
+    h+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;box-shadow:var(--shadow);">`;
+    notas.slice().reverse().forEach((n,i)=>{
+      const ri=notas.length-1-i;
+      const bg={'evento':'#FAEEDA','aviso':'#FCEBEB','info':'#E6F1FB'}[n.tipo]||'#F1EFE8';
+      const tc={'evento':'#633806','aviso':'#791F1F','info':'#0C447C'}[n.tipo]||'#444441';
+      h+=`<div class="note-item"><div class="note-date">${n.fecha}</div><div style="flex:1;"><div style="font-weight:500;font-size:13px;">${n.titulo}</div>${n.detalle?`<div style="font-size:11px;color:var(--text2);margin-top:2px;">${n.detalle}</div>`:''}</div><span style="background:${bg};color:${tc};font-size:9px;border-radius:4px;padding:2px 6px;flex-shrink:0;">${n.tipo}</span><button onclick="notas.splice(${ri},1);updateCounts();render();" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;"><i class="ti ti-trash"></i></button></div>`;
+    });
+    h+=`</div>`;
+  } else h+=`<div class="empty"><i class="ti ti-notes"></i>Sin notas aún</div>`;
+  if(showForm==='notas'){
+    h+=`<div class="form-card"><h3><i class="ti ti-plus" style="font-size:13px;vertical-align:-2px;margin-right:5px;color:#1D9E75;"></i>Nueva nota o aviso</h3>
+    <div class="form-grid three"><div class="form-group"><label>Fecha</label><input type="date" id="nFe" value="2026-05-26"></div><div class="form-group"><label>Tipo</label><select id="nTi"><option value="evento">Evento</option><option value="aviso">Aviso</option><option value="info">Info</option></select></div><div class="form-group"><label>Título</label><input type="text" id="nTt" placeholder="Boda en sala, Reunión..."></div></div>
+    <div class="form-group"><label>Detalle (opcional)</label><input type="text" id="nDe" placeholder="Más información..."></div>
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-primary" onclick="saveNota()">Guardar</button><button class="btn-sec" onclick="showForm=null;render()">Cancelar</button></div></div>`;
+  } else h+=`<button class="add-btn" onclick="showForm='notas';render()"><i class="ti ti-plus"></i> Agregar nota</button>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+// MODAL
+function openEdit(emp,wi,di) {
+  editCell={emp,wi,di};
+  document.getElementById('modalTitle').innerHTML=`<i class="ti ti-pencil" style="font-size:14px;vertical-align:-2px;margin-right:6px;color:#1D9E75;"></i>Editar turno — ${emp} · ${SEM_DAYS[wi][di]}`;
+  document.getElementById('modalVal').value=(turnos[wi][emp]||[])[di]||'';
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); editCell=null; }
+function setModalVal(v) { document.getElementById('modalVal').value=v; }
+function saveModal() {
+  if(!editCell) return;
+  const{emp,wi,di}=editCell;
+  const val=document.getElementById('modalVal').value.trim();
+  if(!turnos[wi][emp]) turnos[wi][emp]=Array(7).fill('');
+  turnos[wi][emp][di]=val;
+  closeModal();
+  render();
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('modalOverlay')) closeModal(); });
+
+// VAC FORM
+function openVacForm(emp) { showVacForm=emp; render(); }
+function saveVac() {
+  const emp=document.getElementById('vE')?.value;
+  const tipo=document.getElementById('vT')?.value;
+  const inicio=document.getElementById('vI')?.value;
+  const fin=document.getElementById('vF')?.value;
+  const notas2=document.getElementById('vN')?.value?.trim();
+  if(!emp||!inicio||!fin){alert('Completa los campos');return;}
+  if(!vacData[emp]) vacData[emp]=[];
+  vacData[emp].push({tipo,inicio,fin,notas:notas2});
+  vacData[emp].sort((a,b)=>a.inicio.localeCompare(b.inicio));
+  showVacForm=false; render();
+}
+
+// EXTRAS / PRACTICAS / NOTAS
+function saveExtra() {
+  const nombre=document.getElementById('fN')?.value?.trim();
+  if(!nombre){alert('Escribe el nombre');return;}
+  const puesto=document.getElementById('fP')?.value;
+  const dias=[0,1,2,3,4,5,6].map(i=>document.getElementById('fd'+i)?.value?.trim()||'');
+  extras.push({nombre,puesto,semana:curWeek,dias});
+  showForm=null; updateCounts(); render();
+}
+function savePractica() {
+  const nombre=document.getElementById('fN')?.value?.trim();
+  if(!nombre){alert('Escribe el nombre');return;}
+  const centro=document.getElementById('fC')?.value?.trim()||'Sin especificar';
+  const dias=[0,1,2,3,4,5,6].map(i=>document.getElementById('fd'+i)?.value?.trim()||'');
+  practicas.push({nombre,centro,semana:curWeek,dias});
+  showForm=null; updateCounts(); render();
+}
+function saveNota() {
+  const fecha=document.getElementById('nFe')?.value;
+  const tipo=document.getElementById('nTi')?.value;
+  const titulo=document.getElementById('nTt')?.value?.trim();
+  const detalle=document.getElementById('nDe')?.value?.trim();
+  if(!titulo){alert('Escribe el título');return;}
+  notas.push({fecha,tipo,titulo,detalle});
+  notas.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  showForm=null; updateCounts(); render();
+}
+
+// CLOCK
+function updateClock() {
+  const n=new Date();
+  document.getElementById('clockBadge').textContent=`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}`;
+}
+updateClock();
+setInterval(updateClock,30000);
+
+// INIT
+document.getElementById('subBar').innerHTML=buildSubBar();
+render();
+</script>
+</body>
+</html>
