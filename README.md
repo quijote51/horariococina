@@ -1,5 +1,5 @@
-[e (1).html](https://github.com/user-attachments/files/34422266/e.1.html)
-[index (1).html](https://github.com/user-attachments/files/34422268/index.1.html)<!doctype html>
+[e.1.html](https://github.com/user-attachments/files/34423993/e.1.html)
+[index (2).html](https://github.com/user-attachments/files/34423995/index.2.html)<!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex"><meta name="theme-color" content="#0f6e56">
 <title>Horarios de Cocina</title>
